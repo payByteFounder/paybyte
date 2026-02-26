@@ -30,10 +30,10 @@
 #define COPYRIGHT_HOLDERS "The %s developers"
 
 /* Copyright holder(s) */
-#define COPYRIGHT_HOLDERS_FINAL "The Litecoin Core developers"
+#define COPYRIGHT_HOLDERS_FINAL "The Paybyte Core developers"
 
 /* Replacement for %s in copyright holders string */
-#define COPYRIGHT_HOLDERS_SUBSTITUTION "Litecoin Core"
+#define COPYRIGHT_HOLDERS_SUBSTITUTION "Paybyte Core"
 
 /* Copyright year */
 #define COPYRIGHT_YEAR 2024
@@ -351,22 +351,22 @@
 #define LT_OBJDIR ".libs/"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "https://github.com/litecoin-project/litecoin/issues"
+#define PACKAGE_BUGREPORT "https://github.com/payByteFounder/paybyte/issues"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "Paybyte Core"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Paybyte Core 0.21.4"
+#define PACKAGE_STRING "Paybyte Core 0.0.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "paybyte"
 
 /* Define to the home page for this package. */
-#define PACKAGE_URL "https://litecoin.org/"
+#define PACKAGE_URL "https://paybyte.org/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.21.4"
+#define PACKAGE_VERSION "0.0.1"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */
