@@ -59,7 +59,7 @@ HelpMessageDialog::HelpMessageDialog(QWidget *parent, bool about) :
             "<br><br>" +
             tr("PayByte Core is experimental software.") +
             "<br><br>" +
-            tr("Copyright (C) 2026 The Paybyte Core developers") +
+            tr("Copyright (C) 2026 The Paybyte Core developers & Atlas") +
             "<br>" +
             licenseInfoHTML
         );

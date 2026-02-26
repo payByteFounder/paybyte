@@ -47,7 +47,7 @@ const QString BITCOIN_IPC_PREFIX("paybyte:");
 //
 static QString ipcServerName()
 {
-    QString name("LitecoinQt");
+    QString name("PayByteQt");
 
     // Append a simple hash of the datadir
     // Note that GetDataDir(true) returns a different path
@@ -172,7 +172,7 @@ PaymentServer::PaymentServer(QObject* parent, bool startLocalServer) :
         if (!uriServer->listen(name)) {
             // constructor is called early in init, so don't use "Q_EMIT message()" here
             QMessageBox::critical(nullptr, tr("Payment request error"),
-                tr("Cannot start litecoin: click-to-pay handler"));
+                tr("Cannot start paybyte: click-to-pay handler"));
         }
         else {
             connect(uriServer, &QLocalServer::newConnection, this, &PaymentServer::handleURIConnection);
@@ -222,7 +222,7 @@ void PaymentServer::handleURIOrFile(const QString& s)
 
     if (s.startsWith("paybyte://", Qt::CaseInsensitive))
     {
-        Q_EMIT message(tr("URI handling"), tr("'paybyte://' is not a valid URI. Use 'litecoin:' instead."),
+        Q_EMIT message(tr("URI handling"), tr("'paybyte://' is not a valid URI. Use 'paybyte:' instead."),
             CClientUIInterface::MSG_ERROR);
     }
     else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // bitcoin: URI
