@@ -413,9 +413,160 @@
           </item>
          </layout>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
+      </item>
+
+      <!-- ===== Mining Stats Frame ===== -->
+      <item>
+       <widget class="QFrame" name="frameMining">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayoutMining">
+
+         <item>
+          <widget class="QLabel" name="labelMiningTitle">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Mining Stats</string>
+           </property>
+          </widget>
+         </item>
+
+         <item>
+          <layout class="QGridLayout" name="gridLayoutMining">
+
+           <item row="0" column="0">
+            <widget class="QLabel" name="labelMiningStatusText">
+             <property name="text">
+              <string>Status:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="labelMiningStatusValue">
+             <property name="text">
+              <string>Stopped</string>
+             </property>
+            </widget>
+           </item>
+
+           <item row="1" column="0">
+            <widget class="QLabel" name="labelHashrateText">
+             <property name="text">
+              <string>Network Hashrate:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="labelHashrateValue">
+             <property name="text">
+              <string>0 H/s</string>
+             </property>
+            </widget>
+           </item>
+
+           <item row="2" column="0">
+            <widget class="QLabel" name="labelLocalHashrateText">
+             <property name="text">
+              <string>Your Hashrate:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="labelLocalHashrateValue">
+             <property name="text">
+              <string>0 H/s</string>
+             </property>
+            </widget>
+           </item>
+
+           <item row="3" column="0">
+            <widget class="QLabel" name="labelDifficultyText">
+             <property name="text">
+              <string>Difficulty:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="labelDifficultyValue">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+
+           <item row="4" column="0">
+            <widget class="QLabel" name="labelBlocksFoundText">
+             <property name="text">
+              <string>Blocks Height:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="labelBlocksFoundValue">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+
+           <item row="5" column="0">
+            <widget class="QLabel" name="labelEstTimeText">
+             <property name="text">
+              <string>Est. Time:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLabel" name="labelEstTimeValue">
+             <property name="text">
+              <string>—</string>
+             </property>
+            </widget>
+           </item>
+
+           <item row="6" column="0">
+            <widget class="QLabel" name="labelThreadCountText">
+             <property name="text">
+              <string>Threads:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QSpinBox" name="spinMiningThreads">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>64</number>
+             </property>
+             <property name="singleStep">
+              <number>1</number>
+             </property>
+             <property name="value">
+              <number>8</number>
+             </property>
+            </widget>
+           </item>
+
+          </layout>
+         </item>
+
+        </layout>
+       </widget>
+      </item>
+
+      <!-- ===== Keep existing spacer ===== -->
+      <item>
+       <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>

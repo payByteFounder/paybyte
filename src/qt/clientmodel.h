@@ -13,6 +13,8 @@
 #include <sync.h>
 #include <uint256.h>
 
+#include <interfaces/node.h>
+
 class BanTableModel;
 class CBlockIndex;
 class OptionsModel;
@@ -84,6 +86,14 @@ public:
 
     Mutex m_cached_tip_mutex;
     uint256 m_cached_tip_blocks GUARDED_BY(m_cached_tip_mutex){};
+
+    double getDifficulty() const;
+    double getNetworkHashPS() const;
+    bool getMiningStatus() const;
+    double getLocalHashRate() const;
+
+    void setMiningThreads(int threads);
+    int getMiningThreads() const;
 
 private:
     interfaces::Node& m_node;

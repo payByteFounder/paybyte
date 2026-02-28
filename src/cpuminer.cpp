@@ -21,12 +21,14 @@ CpuMiner::~CpuMiner() { Stop(); }
 
 bool CpuMiner::Start(int threads, const CScript& scriptPubKey)
 {
+    m_script = scriptPubKey;
     if (threads <= 0) return false;
     if (m_running.exchange(true)) return false; // already running
 
     m_threads.store(threads);
     m_hashes.store(0);
     m_blocks_found.store(0);
+    m_start_time.store(GetTimeMillis());
 
     m_workers.clear();
     m_workers.reserve((size_t)threads);
@@ -46,6 +48,8 @@ void CpuMiner::Stop()
     }
     m_workers.clear();
     m_threads.store(0);
+    m_hashes.store(0);
+    m_start_time.store(0);
 }
 
 void CpuMiner::WorkerLoop(int worker_id, CScript scriptPubKey)
@@ -125,4 +129,36 @@ void CpuMiner::WorkerLoop(int worker_id, CScript scriptPubKey)
             }
         }
     }
+}
+
+double CpuMiner::GetHashRate() const
+{
+    if (!m_running.load())
+        return 0.0;
+
+    int64_t start = m_start_time.load();
+    if (start == 0)
+        return 0.0;
+
+    int64_t now = GetTimeMillis();
+    double seconds = (now - start) / 1000.0;
+
+    if (seconds <= 0.0)
+        return 0.0;
+
+    return m_hashes.load() / seconds;
+}
+
+void CpuMiner::SetThreadCount(int threads)
+{
+    if (threads <= 0)
+        threads = 1;
+
+    if (!m_running.load()) {
+        m_threads.store(threads);
+        return;
+    }
+
+    Stop();
+    Start(threads, m_script);
 }

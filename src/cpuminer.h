@@ -3,6 +3,7 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
+#include <script/script.h>
 #include <string>
 #include <thread>
 #include <vector>
@@ -10,7 +11,6 @@
 class ChainstateManager;
 class CTxMemPool;
 class CBlock;
-class CScript;
 struct NodeContext;
 
 class CpuMiner
@@ -27,6 +27,9 @@ public:
     uint64_t GetHashes() const { return m_hashes.load(); }
     uint64_t GetBlocksFound() const { return m_blocks_found.load(); }
     int GetThreads() const { return m_threads.load(); }
+    double GetHashRate() const;
+    void SetThreadCount(int threads);
+    int GetThreadCount() const { return m_threads.load(); }
 
 private:
     void WorkerLoop(int worker_id, CScript scriptPubKey);
@@ -38,5 +41,8 @@ private:
     std::atomic<uint64_t> m_hashes{0};
     std::atomic<uint64_t> m_blocks_found{0};
 
+    std::atomic<int64_t> m_start_time{0};
+
     std::vector<std::thread> m_workers;
+    CScript m_script;
 };

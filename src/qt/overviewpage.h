@@ -36,6 +36,7 @@ public:
     void setClientModel(ClientModel *clientModel);
     void setWalletModel(WalletModel *walletModel);
     void showOutOfSyncWarning(bool fShow);
+    void updateMiningStats();
 
 public Q_SLOTS:
     void setBalance(const interfaces::WalletBalances& balances);
@@ -54,6 +55,7 @@ private:
 
     TxViewDelegate *txdelegate;
     std::unique_ptr<TransactionFilterProxy> filter;
+    QTimer* m_miningTimer;
 
 private Q_SLOTS:
     void updateDisplayUnit();
@@ -61,6 +63,7 @@ private Q_SLOTS:
     void updateAlerts(const QString &warnings);
     void updateWatchOnlyLabels(bool showWatchOnly);
     void handleOutOfSyncWarningClicks();
+    void onThreadCountChanged(int value);
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H

@@ -20,6 +20,9 @@
 #include <QApplication>
 #include <QPainter>
 #include <QStatusTipEvent>
+#include <QTimer>
+
+#include <rpc/mining.h>
 
 #include <algorithm>
 #include <map>
@@ -146,6 +149,14 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
 {
     ui->setupUi(this);
 
+    m_miningTimer = new QTimer(this);
+    m_miningTimer->setInterval(1000);
+
+    connect(m_miningTimer, &QTimer::timeout,
+            this, &OverviewPage::updateMiningStats);
+
+    m_miningTimer->start();
+
     m_balances.balance = -1;
 
     // use a SingleColorIcon for the "out of sync warning" icon
@@ -166,6 +177,11 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     showOutOfSyncWarning(true);
     connect(ui->labelWalletStatus, &QPushButton::clicked, this, &OverviewPage::handleOutOfSyncWarningClicks);
     connect(ui->labelTransactionsStatus, &QPushButton::clicked, this, &OverviewPage::handleOutOfSyncWarningClicks);
+
+    connect(ui->spinMiningThreads,
+            QOverload<int>::of(&QSpinBox::valueChanged),
+            this,
+            &OverviewPage::onThreadCountChanged);
 }
 
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
@@ -250,6 +266,57 @@ void OverviewPage::updateWatchOnlyLabels(bool showWatchOnly)
         ui->labelWatchImmature->hide();
 }
 
+void OverviewPage::updateMiningStats()
+{
+    if (!clientModel)
+        return;
+
+    ui->labelDifficultyValue->setText(
+        QString::number(clientModel->getDifficulty(), 'f', 6)
+    );
+
+    ui->labelHashrateValue->setText(
+        QString::number(clientModel->getNetworkHashPS(), 'f', 0) + " H/s"
+    );
+
+    ui->labelLocalHashrateValue->setText(
+        QString::number(clientModel->getLocalHashRate(), 'f', 0) + " H/s"
+    );
+
+    ui->labelBlocksFoundValue->setText(
+        QString::number(clientModel->getNumBlocks())
+    );
+
+    bool mining = clientModel->getMiningStatus();
+    ui->labelMiningStatusValue->setText(mining ? "Running" : "Stopped");
+
+    double local = clientModel->getLocalHashRate();
+    double difficulty = clientModel->getDifficulty();
+
+    if (local > 0.0 && difficulty > 0.0) {
+
+        double hashes_required = difficulty * 4294967296.0;
+        double est_seconds = hashes_required / local;
+
+        int minutes = (int)(est_seconds / 60);
+        int hours = minutes / 60;
+        minutes = minutes % 60;
+
+        if (hours > 0)
+            ui->labelEstTimeValue->setText(
+                QString::number(hours) + "h " +
+                QString::number(minutes) + "m"
+            );
+        else
+            ui->labelEstTimeValue->setText(
+                QString::number(minutes) + "m"
+            );
+    }
+    else {
+        ui->labelEstTimeValue->setText("--");
+    }
+}
+
 void OverviewPage::setClientModel(ClientModel *model)
 {
     this->clientModel = model;
@@ -258,6 +325,8 @@ void OverviewPage::setClientModel(ClientModel *model)
         connect(model, &ClientModel::alertsChanged, this, &OverviewPage::updateAlerts);
         updateAlerts(model->getStatusBarWarnings());
     }
+    connect(model, &ClientModel::numBlocksChanged,
+            this, &OverviewPage::updateMiningStats);
 }
 
 void OverviewPage::setWalletModel(WalletModel *model)
@@ -320,4 +389,12 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
 {
     ui->labelWalletStatus->setVisible(fShow);
     ui->labelTransactionsStatus->setVisible(fShow);
+}
+
+void OverviewPage::onThreadCountChanged(int value)
+{
+    if (!clientModel)
+        return;
+
+    clientModel->setMiningThreads(value);
 }

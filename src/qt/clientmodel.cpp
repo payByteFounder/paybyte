@@ -10,13 +10,17 @@
 #include <qt/peertablemodel.h>
 
 #include <clientversion.h>
+#include <cpuminer.h>
 #include <interfaces/handler.h>
 #include <interfaces/node.h>
 #include <net.h>
 #include <netbase.h>
+#include <node/context.h>
+
+#include <rpc/client.h>
+#include <univalue.h>
 #include <util/system.h>
 #include <util/threadnames.h>
-#include <validation.h>
 
 #include <stdint.h>
 
@@ -223,6 +227,52 @@ void ClientModel::updateBanlist()
     banTableModel->refresh();
 }
 
+double ClientModel::getDifficulty() const
+{
+    try {
+        UniValue params(UniValue::VARR);
+        UniValue result = m_node.executeRpc("getblockchaininfo", params, "");
+
+        if (result.exists("difficulty"))
+            return result["difficulty"].get_real();
+
+        return 0.0;
+    } catch (...) {
+        return 0.0;
+    }
+}
+
+double ClientModel::getNetworkHashPS() const
+{
+    try {
+        UniValue params(UniValue::VARR);
+        UniValue result = m_node.executeRpc("getmininginfo", params, "");
+
+        if (result.exists("networkhashps"))
+            return result["networkhashps"].get_real();
+
+        return 0.0;
+    } catch (...) {
+        return 0.0;
+    }
+}
+
+bool ClientModel::getMiningStatus() const
+{
+    if (!m_node.context() || !m_node.context()->miner)
+        return false;
+
+    return m_node.context()->miner->IsRunning();
+}
+
+double ClientModel::getLocalHashRate() const
+{
+    if (!m_node.context() || !m_node.context()->miner)
+        return 0.0;
+
+    return m_node.context()->miner->GetHashRate();
+}
+
 // Handlers for core signals
 static void ShowProgress(ClientModel *clientmodel, const std::string &title, int nProgress)
 {
@@ -274,7 +324,7 @@ static void BlockTipChanged(ClientModel* clientmodel, SynchronizationState sync_
     }
 
     // Throttle GUI notifications about (a) blocks during initial sync, and (b) both blocks and headers during reindex.
-    const bool throttle = (sync_state != SynchronizationState::POST_INIT && !fHeader) || sync_state == SynchronizationState::INIT_REINDEX;
+    const bool throttle = !fHeader;
     const int64_t now = throttle ? GetTimeMillis() : 0;
     int64_t& nLastUpdateNotification = fHeader ? nLastHeaderTipUpdateNotification : nLastBlockTipUpdateNotification;
     if (throttle && now < nLastUpdateNotification + MODEL_UPDATE_DELAY) {
@@ -323,4 +373,22 @@ bool ClientModel::getProxyInfo(std::string& ip_port) const
       return true;
     }
     return false;
+}
+
+void ClientModel::setMiningThreads(int threads)
+{
+    NodeContext* ctx = m_node.context();
+    if (!ctx || !ctx->miner)
+        return;
+
+    ctx->miner->SetThreadCount(threads);
+}
+
+int ClientModel::getMiningThreads() const
+{
+    NodeContext* ctx = m_node.context();
+    if (!ctx || !ctx->miner)
+        return 0;
+
+    return ctx->miner->GetThreadCount();
 }

@@ -34,7 +34,7 @@ class WalletClient;
 struct NodeContext {
     std::unique_ptr<CConnman> connman;
 
-    // ✅ Single miner instance
+    // Single miner instance
     std::unique_ptr<CpuMiner> miner;
 
     std::unique_ptr<CTxMemPool> mempool;
@@ -59,6 +59,8 @@ struct NodeContext {
     std::unique_ptr<CScheduler> scheduler;
 
     std::function<void()> rpc_interruption_point = [] {};
+
+    std::unique_ptr<CpuMiner> cpu_miner;
 
     NodeContext();
     ~NodeContext();
